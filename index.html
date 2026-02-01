@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narrative Nexus - Interactive Roleplay</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e14;
+            --bg-secondary: #13171f;
+            --bg-tertiary: #1a1f2e;
+            --accent-gold: #d4af37;
+            --accent-purple: #9d4edd;
+            --accent-cyan: #06ffa5;
+            --text-primary: #e8e6e3;
+            --text-secondary: #a8a29e;
+            --border-color: #2d3748;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(157, 78, 221, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(6, 255, 165, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        #root {
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            animation: fadeIn 1s ease-out 0.2s both;
+        }
+
+        .tab {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 1rem 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .tab:hover {
+            color: var(--accent-cyan);
+        }
+
+        .tab.active {
+            color: var(--accent-gold);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-purple));
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .content-section {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-purple), var(--accent-cyan));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+
+        .card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(212, 175, 55, 0.2);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-gold);
+        }
+
+        .card-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Crimson Pro', serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .input-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+            color: var(--bg-primary);
+            border: none;
+            padding: 0.875rem 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 8px 24px rgba(6, 255, 165, 0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 20, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--accent-cyan);
+        }
+
+        .chat-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chat-messages {
+            height: 500px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            padding-right: 1rem;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--accent-gold);
+            border-radius: 4px;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .message-name {
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .message-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-left: auto;
+        }
+
+        .message-content {
+            padding-left: 3rem;
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .message-input {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .message-input input {
+            flex: 1;
+        }
+
+        .stat-bar {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--accent-purple);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: scaleX(0);
+            }
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .tab {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function RoleplayApp() {
+            const [activeTab, setActiveTab] = useState('characters');
+            const [characters, setCharacters] = useState([]);
+            const [scenes, setScenes] = useState([]);
+            const [activeScene, setActiveScene] = useState(null);
+            const [showModal, setShowModal] = useState(false);
+            const [modalType, setModalType] = useState('');
+            const [messages, setMessages] = useState([]);
+
+            // Form states
+            const [charForm, setCharForm] = useState({
+                name: '',
+                description: '',
+                personality: '',
+                backstory: ''
+            });
+
+            const [sceneForm, setSceneForm] = useState({
+                title: '',
+                setting: '',
+                participants: []
+            });
+
+            const [messageInput, setMessageInput] = useState('');
+            const [selectedCharacter, setSelectedCharacter] = useState('');
+
+            const openModal = (type) => {
+                setModalType(type);
+                setShowModal(true);
+            };
+
+            const closeModal = () => {
+                setShowModal(false);
+                setCharForm({ name: '', description: '', personality: '', backstory: '' });
+                setSceneForm({ title: '', setting: '', participants: [] });
+            };
+
+            const createCharacter = () => {
+                if (!charForm.name) return;
+                
+                const newChar = {
+                    id: Date.now(),
+                    ...charForm,
+                    createdAt: new Date().toISOString()
+                };
+                
+                setCharacters([...characters, newChar]);
+                closeModal();
+            };
+
+            const deleteCharacter = (id) => {
+                setCharacters(characters.filter(c => c.id !== id));
+            };
+
+            const createScene = () => {
+                if (!sceneForm.title) return;
+                
+                const newScene = {
+                    id: Date.now(),
+                    ...sceneForm,
+                    createdAt: new Date().toISOString(),
+                    messages: []
+                };
+                
+                setScenes([...scenes, newScene]);
+                closeModal();
+            };
+
+            const deleteScene = (id) => {
+                setScenes(scenes.filter(s => s.id !== id));
+                if (activeScene?.id === id) {
+                    setActiveScene(null);
+                }
+            };
+
+            const startScene = (scene) => {
+                setActiveScene(scene);
+                setMessages(scene.messages || []);
+                setActiveTab('play');
+            };
+
+            const sendMessage = () => {
+                if (!messageInput.trim() || !selectedCharacter) return;
+
+                const character = characters.find(c => c.id === parseInt(selectedCharacter));
+                if (!character) return;
+
+                const newMessage = {
+                    id: Date.now(),
+                    characterId: character.id,
+                    characterName: character.name,
+                    content: messageInput,
+                    timestamp: new Date().toLocaleTimeString()
+                };
+
+                const updatedMessages = [...messages, newMessage];
+                setMessages(updatedMessages);
+
+                // Update scene messages
+                if (activeScene) {
+                    const updatedScenes = scenes.map(s => 
+                        s.id === activeScene.id 
+                            ? { ...s, messages: updatedMessages }
+                            : s
+                    );
+                    setScenes(updatedScenes);
+                    setActiveScene({ ...activeScene, messages: updatedMessages });
+                }
+
+                setMessageInput('');
+            };
+
+            const renderCharacters = () => (
+                <div className="content-section">
+                    <div style={{ marginBottom: '2rem' }}>
+                        <button className="btn" onClick={() => openModal('character')}>
+                            + Create Character
+                        </button>
+                    </div>
+                    
+                    {characters.length === 0 ? (
+                        <div className="empty-state">
+                            <h3>No Characters Yet</h3>
+                            <p>Create your first character to begin your roleplay journey</p>
+                        </div>
+                    ) : (
+                        <div className="grid">
+                            {characters.map(char => (
+                                <div key={char.id} className="card">
+                                    <h3>{char.name}</h3>
+                                    <p className="card-meta">Character Profile</p>
+                                    <p><strong>Description:</strong> {char.description}</p>
+                                    <p><strong>Personality:</strong> {char.personality}</p>
+                                    <p><strong>Backstory:</strong> {char.backstory}</p>
+                                    <button 
+                                        className="btn btn-danger" 
+                                        onClick={() => deleteCharacter(char.id)}
+                                        style={{ marginTop: '1rem' }}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+
+            const renderScenes = () => (
+                <div className="content-section">
+                    <div style={{ marginBottom: '2rem' }}>
+                        <button className="btn" onClick={() => openModal('scene')}>
+                            + Create Scene
+                        </button>
+                    </div>
+                    
+                    {scenes.length === 0 ? (
+                        <div className="empty-state">
+                            <h3>No Scenes Created</h3>
+                            <p>Set up a scene to start roleplaying with your characters</p>
+                        </div>
+                    ) : (
+                        <div className="grid">
+                            {scenes.map(scene => (
+                                <div key={scene.id} className="card">
+                                    <h3>{scene.title}</h3>
+                                    <p className="card-meta">Roleplay Scene</p>
+                                    <p><strong>Setting:</strong> {scene.setting}</p>
+                                    <div style={{ marginTop: '1rem' }}>
+                                        <span className="badge">
+                                            {scene.messages?.length || 0} Messages
+                                        </span>
+                                    </div>
+                                    <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
+                                        <button 
+                                            className="btn" 
+                                            onClick={() => startScene(scene)}
+                                        >
+                                            Enter Scene
+                                        </button>
+                                        <button 
+                                            className="btn btn-danger" 
+                                            onClick={() => deleteScene(scene.id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+
+            const renderPlay = () => {
+                if (!activeScene) {
+                    return (
+                        <div className="empty-state">
+                            <h3>No Active Scene</h3>
+                            <p>Go to Scenes tab and select a scene to begin roleplaying</p>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="content-section">
+                        <div className="stat-bar">
+                            <span className="stat-label">Active Scene:</span>
+                            <span className="stat-value">{activeScene.title}</span>
+                        </div>
+                        
+                        <div className="chat-container">
+                            <div className="chat-messages">
+                                {messages.length === 0 ? (
+                                    <div className="empty-state" style={{ padding: '3rem 1rem' }}>
+                                        <p>No messages yet. Start the roleplay!</p>
+                                    </div>
+                                ) : (
+                                    messages.map(msg => (
+                                        <div key={msg.id} className="message">
+                                            <div className="message-header">
+                                                <div className="message-avatar">
+                                                    {msg.characterName.charAt(0)}
+                                                </div>
+                                                <span className="message-name">{msg.characterName}</span>
+                                                <span className="message-time">{msg.timestamp}</span>
+                                            </div>
+                                            <div className="message-content">
+                                                {msg.content}
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                            
+                            <div className="input-group">
+                                <label>Select Character</label>
+                                <select 
+                                    value={selectedCharacter} 
+                                    onChange={(e) => setSelectedCharacter(e.target.value)}
+                                >
+                                    <option value="">Choose a character...</option>
+                                    {characters.map(char => (
+                                        <option key={char.id} value={char.id}>
+                                            {char.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            
+                            <div className="message-input">
+                                <input
+                                    type="text"
+                                    placeholder="Type your message..."
+                                    value={messageInput}
+                                    onChange={(e) => setMessageInput(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                                />
+                                <button className="btn" onClick={sendMessage}>
+                                    Send
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div className="app-container">
+                    <header className="header">
+                        <h1>Narrative Nexus</h1>
+                        <p>Create characters, build worlds, tell stories</p>
+                    </header>
+
+                    <div className="tabs">
+                        <button 
+                            className={`tab ${activeTab === 'characters' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('characters')}
+                        >
+                            Characters
+                        </button>
+                        <button 
+                            className={`tab ${activeTab === 'scenes' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('scenes')}
+                        >
+                            Scenes
+                        </button>
+                        <button 
+                            className={`tab ${activeTab === 'play' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('play')}
+                        >
+                            Play
+                        </button>
+                    </div>
+
+                    {activeTab === 'characters' && renderCharacters()}
+                    {activeTab === 'scenes' && renderScenes()}
+                    {activeTab === 'play' && renderPlay()}
+
+                    {showModal && (
+                        <div className="modal" onClick={closeModal}>
+                            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                                <div className="modal-header">
+                                    <h2>
+                                        {modalType === 'character' ? 'Create Character' : 'Create Scene'}
+                                    </h2>
+                                    <button className="close-btn" onClick={closeModal}>×</button>
+                                </div>
+
+                                {modalType === 'character' ? (
+                                    <>
+                                        <div className="input-group">
+                                            <label>Name</label>
+                                            <input
+                                                type="text"
+                                                value={charForm.name}
+                                                onChange={(e) => setCharForm({...charForm, name: e.target.value})}
+                                                placeholder="Character name..."
+                                            />
+                                        </div>
+                                        <div className="input-group">
+                                            <label>Description</label>
+                                            <textarea
+                                                value={charForm.description}
+                                                onChange={(e) => setCharForm({...charForm, description: e.target.value})}
+                                                placeholder="Physical appearance, age, etc..."
+                                            />
+                                        </div>
+                                        <div className="input-group">
+                                            <label>Personality</label>
+                                            <textarea
+                                                value={charForm.personality}
+                                                onChange={(e) => setCharForm({...charForm, personality: e.target.value})}
+                                                placeholder="Traits, quirks, behaviors..."
+                                            />
+                                        </div>
+                                        <div className="input-group">
+                                            <label>Backstory</label>
+                                            <textarea
+                                                value={charForm.backstory}
+                                                onChange={(e) => setCharForm({...charForm, backstory: e.target.value})}
+                                                placeholder="History, motivations, goals..."
+                                            />
+                                        </div>
+                                        <button className="btn" onClick={createCharacter}>
+                                            Create Character
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="input-group">
+                                            <label>Scene Title</label>
+                                            <input
+                                                type="text"
+                                                value={sceneForm.title}
+                                                onChange={(e) => setSceneForm({...sceneForm, title: e.target.value})}
+                                                placeholder="Scene name..."
+                                            />
+                                        </div>
+                                        <div className="input-group">
+                                            <label>Setting</label>
+                                            <textarea
+                                                value={sceneForm.setting}
+                                                onChange={(e) => setSceneForm({...sceneForm, setting: e.target.value})}
+                                                placeholder="Describe the environment, time period, atmosphere..."
+                                            />
+                                        </div>
+                                        <button className="btn" onClick={createScene}>
+                                            Create Scene
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<RoleplayApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>

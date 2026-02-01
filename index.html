@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Narrative Nexus - Interactive Roleplay</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <title>Elite Operations Command</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -16,134 +13,378 @@
         }
 
         :root {
-            --bg-primary: #0a0e14;
-            --bg-secondary: #13171f;
-            --bg-tertiary: #1a1f2e;
-            --accent-gold: #d4af37;
-            --accent-purple: #9d4edd;
-            --accent-cyan: #06ffa5;
-            --text-primary: #e8e6e3;
-            --text-secondary: #a8a29e;
-            --border-color: #2d3748;
+            --bg-black: #000000;
+            --bg-dark: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-tertiary: #1f1f1f;
+            --gold-primary: #d4af37;
+            --gold-light: #f4d03f;
+            --gold-dark: #b8941e;
+            --blue-primary: #1e3a8a;
+            --blue-light: #3b82f6;
+            --blue-dark: #1e40af;
+            --text-primary: #ffffff;
+            --text-secondary: #b8b8b8;
+            --text-tertiary: #808080;
         }
 
         body {
-            font-family: 'Crimson Pro', serif;
-            background: var(--bg-primary);
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-black);
             color: var(--text-primary);
             overflow-x: hidden;
-            line-height: 1.6;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
+        /* Hero Section */
+        .hero-section {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-black);
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920');
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.25) saturate(0.7);
+            animation: slowZoom 30s ease-in-out infinite alternate;
+        }
+
+        @keyframes slowZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+
+        .hero-overlay {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 50%, rgba(157, 78, 221, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 40% 20%, rgba(6, 255, 165, 0.05) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
+                radial-gradient(ellipse at center, transparent 0%, var(--bg-black) 100%),
+                linear-gradient(180deg, 
+                    rgba(10, 10, 10, 0.4) 0%, 
+                    rgba(10, 10, 10, 0.8) 70%,
+                    var(--bg-black) 100%);
         }
 
-        #root {
+        .hero-content {
             position: relative;
-            z-index: 1;
-        }
-
-        .app-container {
-            min-height: 100vh;
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .header {
+            z-index: 2;
             text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeInDown 0.8s ease-out;
+            padding: 2rem;
         }
 
-        .header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 4rem;
+        .hero-emblem {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            border: 3px solid var(--gold-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
             font-weight: 900;
-            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple), var(--accent-cyan));
+            color: var(--gold-primary);
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.4);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.4); }
+            50% { box-shadow: 0 0 60px rgba(212, 175, 55, 0.6); }
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary), var(--gold-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
+            text-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+            animation: fadeInDown 1.2s ease-out;
         }
 
-        .header p {
-            font-size: 1.2rem;
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-subtitle {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            letter-spacing: 0.4em;
             color: var(--text-secondary);
-            font-style: italic;
+            text-transform: uppercase;
+            margin-bottom: 3rem;
+            animation: fadeIn 1.5s ease-out 0.3s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .hero-divider {
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+            margin: 2rem auto;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+
+        .scroll-indicator::before {
+            content: '↓';
+            font-size: 2.5rem;
+            color: var(--gold-primary);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-15px); }
+        }
+
+        /* Tabs Navigation */
+        .tabs-container {
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--gold-primary);
+            z-index: 1000;
+            transform: translateY(-100%);
+            transition: transform 0.4s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .tabs-container.sticky {
+            transform: translateY(0);
         }
 
         .tabs {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid var(--border-color);
-            animation: fadeIn 1s ease-out 0.2s both;
+            justify-content: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0;
         }
 
         .tab {
             background: transparent;
             border: none;
             color: var(--text-secondary);
-            padding: 1rem 2rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
+            padding: 1.5rem 3rem;
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 600;
             cursor: pointer;
             position: relative;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
+            border-right: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .tab:last-child {
+            border-right: none;
         }
 
         .tab:hover {
-            color: var(--accent-cyan);
+            color: var(--gold-light);
+            background: rgba(212, 175, 55, 0.05);
         }
 
         .tab.active {
-            color: var(--accent-gold);
+            color: var(--gold-primary);
+            background: rgba(212, 175, 55, 0.1);
         }
 
         .tab.active::after {
             content: '';
             position: absolute;
-            bottom: -2px;
+            bottom: 0;
             left: 0;
             width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--accent-gold), var(--accent-purple));
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold-primary), var(--gold-light));
             animation: slideIn 0.3s ease-out;
         }
 
-        .content-section {
-            animation: fadeIn 0.5s ease-out;
+        @keyframes slideIn {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        /* Admin Button */
+        .admin-btn {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: var(--bg-black);
+            border: 2px solid var(--gold-primary);
+            padding: 0.875rem 2rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            cursor: pointer;
+            border-radius: 50px;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .admin-btn:hover {
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
+            box-shadow: 0 0 35px rgba(212, 175, 55, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .admin-btn.logged-in {
+            background: linear-gradient(135deg, var(--blue-light), var(--blue-primary));
+            border-color: var(--blue-light);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Content Area */
+        .content-area {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            min-height: 100vh;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            position: relative;
+        }
+
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 200px;
+            height: 1px;
+            background: var(--gold-primary);
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Search and Filter */
+        .controls {
+            display: flex;
             gap: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box, .filter-select {
+            flex: 1;
+            min-width: 250px;
+            padding: 1rem 1.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--text-primary);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            background: var(--bg-tertiary);
+        }
+
+        .search-box::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
         }
 
         .card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-dark) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
             border-radius: 12px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
+            padding: 2rem;
+            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
         }
@@ -155,773 +396,1304 @@
             left: 0;
             width: 100%;
             height: 3px;
-            background: linear-gradient(90deg, var(--accent-gold), var(--accent-purple), var(--accent-cyan));
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold-primary), var(--gold-light));
             transform: scaleX(0);
-            transition: transform 0.3s ease;
-            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
         .card:hover {
-            border-color: var(--accent-gold);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(212, 175, 55, 0.2);
+            border-color: var(--gold-primary);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
         }
 
         .card:hover::before {
             transform: scaleX(1);
         }
 
-        .card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--accent-gold);
+        .card:hover::after {
+            opacity: 1;
         }
 
-        .card-meta {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--accent-cyan);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1rem;
-        }
-
-        .card p {
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-
-        .input-group {
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
             margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
         }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--accent-cyan);
+        .card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold-primary);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
-        .input-group input,
-        .input-group textarea,
-        .input-group select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+        .card-badge {
+            background: var(--gold-primary);
+            color: var(--bg-black);
+            padding: 0.4rem 1rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 20px;
+            letter-spacing: 0.1em;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-content p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .card-content strong {
             color: var(--text-primary);
-            font-family: 'Crimson Pro', serif;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            font-weight: 600;
         }
 
-        .input-group input:focus,
-        .input-group textarea:focus,
-        .input-group select:focus {
-            outline: none;
-            border-color: var(--accent-gold);
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        /* Division Cards */
+        .division-card {
+            position: relative;
+            height: 350px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            transition: all 0.4s ease;
         }
 
-        .input-group textarea {
-            min-height: 120px;
-            resize: vertical;
+        .division-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.3);
+            border-color: var(--gold-primary);
         }
 
-        .btn {
-            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
-            color: var(--bg-primary);
-            border: none;
-            padding: 0.875rem 2rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            font-weight: 500;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .division-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, 
+                rgba(0, 0, 0, 0.3) 0%, 
+                rgba(0, 0, 0, 0.7) 50%,
+                rgba(0, 0, 0, 0.95) 100%);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: background 0.4s ease;
+        }
+
+        .division-card:hover .division-overlay {
+            background: linear-gradient(180deg, 
+                rgba(0, 0, 0, 0.5) 0%, 
+                rgba(0, 0, 0, 0.85) 50%,
+                rgba(0, 0, 0, 0.98) 100%);
+        }
+
+        .division-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--gold-primary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .division-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        /* Player Table */
+        .players-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .players-table thead {
+            background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-dark));
+        }
+
+        .players-table th {
+            padding: 1.25rem;
+            text-align: left;
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
+            color: var(--gold-primary);
+            border-bottom: 2px solid var(--gold-primary);
+        }
+
+        .players-table td {
+            padding: 1.25rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .players-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .players-table tbody tr:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .rank-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: var(--bg-black);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Wanted Cards */
+        .wanted-card {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-dark) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .btn::before {
-            content: '';
+        .wanted-card::before {
+            content: 'WANTED';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
+            top: 1rem;
+            right: 1rem;
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: rgba(212, 175, 55, 0.1);
+            transform: rotate(-15deg);
+            pointer-events: none;
         }
 
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
+        .wanted-card:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--gold-primary);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.3);
+        }
+
+        .threat-level {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 25px;
+            margin-top: 1rem;
+            letter-spacing: 0.1em;
+            font-size: 0.85rem;
+        }
+
+        .threat-low { 
+            background: linear-gradient(135deg, var(--blue-light), var(--blue-primary)); 
+            color: var(--text-primary);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        .threat-medium { 
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary)); 
+            color: var(--bg-black);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .threat-high { 
+            background: linear-gradient(135deg, #ef4444, #dc2626); 
+            color: var(--text-primary);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: var(--bg-black);
+            border: none;
+            padding: 1rem 2.5rem;
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
         }
 
         .btn-secondary {
-            background: var(--bg-tertiary);
+            background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
             color: var(--text-primary);
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: none;
         }
 
         .btn-secondary:hover {
-            background: var(--bg-secondary);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 8px 24px rgba(6, 255, 165, 0.2);
+            border-color: var(--gold-primary);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);
         }
 
         .btn-danger {
             background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: var(--text-primary);
         }
 
         .btn-danger:hover {
-            box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
         }
 
+        /* Modal */
         .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 14, 20, 0.95);
-            display: flex;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            animation: fadeIn 0.3s ease-out;
             padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
         }
 
         .modal-content {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-dark));
+            border: 1px solid var(--gold-primary);
             border-radius: 16px;
-            padding: 2rem;
+            padding: 2.5rem;
             max-width: 600px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            animation: slideUp 0.4s ease-out;
+            animation: modalSlideUp 0.5s ease;
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes modalSlideUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(50px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
         }
 
-        .modal-header h2 {
+        .modal-header h3 {
             font-family: 'Playfair Display', serif;
             font-size: 2rem;
-            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .close-btn {
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 1.5rem;
+            font-size: 2.5rem;
             cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .close-btn:hover {
-            color: var(--accent-cyan);
-        }
-
-        .chat-container {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .chat-messages {
-            height: 500px;
-            overflow-y: auto;
-            margin-bottom: 1rem;
-            padding-right: 1rem;
-        }
-
-        .chat-messages::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .chat-messages::-webkit-scrollbar-track {
-            background: var(--bg-tertiary);
-            border-radius: 4px;
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: var(--accent-gold);
-            border-radius: 4px;
-        }
-
-        .message {
-            margin-bottom: 1.5rem;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .message-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .message-avatar {
+            transition: all 0.3s ease;
+            line-height: 1;
             width: 40px;
             height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 1.1rem;
+            border-radius: 50%;
         }
 
-        .message-name {
-            font-weight: 700;
-            color: var(--accent-gold);
+        .close-btn:hover {
+            color: var(--gold-primary);
+            background: rgba(212, 175, 55, 0.1);
+            transform: rotate(90deg);
         }
 
-        .message-time {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-left: auto;
+        .form-group {
+            margin-bottom: 1.75rem;
         }
 
-        .message-content {
-            padding-left: 3rem;
-            color: var(--text-primary);
-            line-height: 1.7;
+        .form-group label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gold-primary);
+            font-size: 0.85rem;
         }
 
-        .message-input {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .message-input input {
-            flex: 1;
-        }
-
-        .stat-bar {
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem 1.25rem;
             background: var(--bg-tertiary);
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .stat-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-        }
-
-        .stat-value {
-            font-weight: 700;
-            color: var(--accent-gold);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: var(--accent-purple);
+            border: 1px solid rgba(212, 175, 55, 0.3);
             color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            border-radius: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
 
-        .empty-state {
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            background: var(--bg-secondary);
+        }
+
+        .form-group textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        /* Loading Indicator */
+        .loading {
             text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-secondary);
+            padding: 3rem;
+            color: var(--gold-primary);
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
         }
 
-        .empty-state h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            color: var(--accent-gold);
-            margin-bottom: 1rem;
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
         }
 
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: scaleX(0);
-            }
-            to {
-                transform: scaleX(1);
-            }
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
-            .header h1 {
+            .hero-title {
                 font-size: 2.5rem;
+                letter-spacing: 0.1em;
             }
 
-            .grid {
-                grid-template-columns: 1fr;
+            .hero-subtitle {
+                font-size: 1rem;
             }
 
             .tabs {
-                overflow-x: auto;
+                flex-wrap: wrap;
             }
 
             .tab {
-                padding: 0.75rem 1.5rem;
-                font-size: 0.8rem;
+                flex: 1 1 50%;
+                padding: 1rem;
+                font-size: 0.85rem;
             }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .players-table {
+                font-size: 0.85rem;
+            }
+
+            .players-table th,
+            .players-table td {
+                padding: 0.875rem;
+            }
+
+            .admin-btn {
+                top: 1rem;
+                right: 1rem;
+                padding: 0.75rem 1.5rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--gold-primary), var(--gold-dark));
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--gold-light), var(--gold-primary));
         }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+    <!-- Admin Login Button -->
+    <button class="admin-btn" id="adminBtn" onclick="showAdminLogin()">Admin Login</button>
 
-        function RoleplayApp() {
-            const [activeTab, setActiveTab] = useState('characters');
-            const [characters, setCharacters] = useState([]);
-            const [scenes, setScenes] = useState([]);
-            const [activeScene, setActiveScene] = useState(null);
-            const [showModal, setShowModal] = useState(false);
-            const [modalType, setModalType] = useState('');
-            const [messages, setMessages] = useState([]);
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-emblem">E</div>
+            <h1 class="hero-title">Elite Operations</h1>
+            <div class="hero-divider"></div>
+            <p class="hero-subtitle">Command Center</p>
+        </div>
+        <div class="scroll-indicator" onclick="scrollToContent()"></div>
+    </div>
 
-            // Form states
-            const [charForm, setCharForm] = useState({
-                name: '',
-                description: '',
-                personality: '',
-                backstory: ''
+    <!-- Tabs Navigation -->
+    <div class="tabs-container" id="tabsContainer">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('information')">Information</button>
+            <button class="tab" onclick="switchTab('divisions')">Divisions</button>
+            <button class="tab" onclick="switchTab('players')">Players</button>
+            <button class="tab" onclick="switchTab('wanted')">Wanted Reports</button>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area" id="contentArea">
+        <!-- Information Tab -->
+        <div id="information" class="tab-content active">
+            <div class="section-header">
+                <h2>Intelligence Brief</h2>
+            </div>
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Mission Statement</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Objective:</strong> Elite tactical operations community dedicated to excellence in coordinated military roleplay scenarios.</p>
+                        <p><strong>Established:</strong> 2024</p>
+                        <p><strong>Active Operatives:</strong> <span id="memberCount">0</span></p>
+                        <p><strong>Status:</strong> Operational</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Code of Conduct</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>• Maintain operational security at all times</p>
+                        <p>• Uphold chain of command protocols</p>
+                        <p>• Execute missions with precision and professionalism</p>
+                        <p>• Report all suspicious activities immediately</p>
+                        <p>• Zero tolerance for insubordination</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recruitment Process</h3>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Phase I:</strong> Submit application and background check</p>
+                        <p><strong>Phase II:</strong> Complete tactical training program</p>
+                        <p><strong>Phase III:</strong> Pass operational evaluation</p>
+                        <p><strong>Phase IV:</strong> Receive assignment and credentials</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Divisions Tab -->
+        <div id="divisions" class="tab-content">
+            <div class="section-header">
+                <h2>Operational Divisions</h2>
+                <button class="btn admin-only" style="display: none;" onclick="showAddDivision()">+ New Division</button>
+            </div>
+            <div id="divisionsLoading" class="loading">Loading divisions</div>
+            <div class="cards-grid" id="divisionsGrid" style="display: none;">
+                <!-- Divisions will be populated here -->
+            </div>
+        </div>
+
+        <!-- Players Tab -->
+        <div id="players" class="tab-content">
+            <div class="section-header">
+                <h2>Personnel Roster</h2>
+                <button class="btn admin-only" style="display: none;" onclick="showAddPlayer()">+ New Operative</button>
+            </div>
+            <div class="controls">
+                <input type="text" class="search-box" id="playerSearch" placeholder="Search callsign or username..." oninput="filterPlayers()">
+                <select class="filter-select" id="rankFilter" onchange="filterPlayers()">
+                    <option value="">All Ranks</option>
+                    <option value="Commander">Commander</option>
+                    <option value="Captain">Captain</option>
+                    <option value="Lieutenant">Lieutenant</option>
+                    <option value="Sergeant">Sergeant</option>
+                    <option value="Corporal">Corporal</option>
+                    <option value="Operative">Operative</option>
+                </select>
+            </div>
+            <div id="playersLoading" class="loading">Loading personnel</div>
+            <table class="players-table" id="playersTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Callsign</th>
+                        <th>Username</th>
+                        <th>Rank</th>
+                        <th>Division</th>
+                        <th class="admin-only" style="display: none;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="playersTableBody">
+                    <!-- Players will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Wanted Reports Tab -->
+        <div id="wanted" class="tab-content">
+            <div class="section-header">
+                <h2>High-Value Targets</h2>
+                <button class="btn admin-only" style="display: none;" onclick="showAddWanted()">+ New Target</button>
+            </div>
+            <div class="controls">
+                <input type="text" class="search-box" id="wantedSearch" placeholder="Search targets..." oninput="filterWanted()">
+            </div>
+            <div id="wantedLoading" class="loading">Loading targets</div>
+            <div class="cards-grid" id="wantedGrid" style="display: none;">
+                <!-- Wanted reports will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Admin Access</h3>
+                <button class="close-btn" onclick="closeModal('adminLoginModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Access Code</label>
+                <input type="password" id="adminPassword" placeholder="Enter authorization code...">
+            </div>
+            <button class="btn" onclick="adminLogin()">Authenticate</button>
+        </div>
+    </div>
+
+    <!-- Add Division Modal -->
+    <div id="addDivisionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Division</h3>
+                <button class="close-btn" onclick="closeModal('addDivisionModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Division Name</label>
+                <input type="text" id="divisionName" placeholder="e.g., Special Operations">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="divisionDesc" placeholder="Division description and capabilities..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Image URL</label>
+                <input type="text" id="divisionImage" placeholder="https://example.com/image.jpg">
+            </div>
+            <button class="btn" onclick="addDivision()">Create Division</button>
+        </div>
+    </div>
+
+    <!-- Add Player Modal -->
+    <div id="addPlayerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Operative</h3>
+                <button class="close-btn" onclick="closeModal('addPlayerModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Callsign</label>
+                <input type="text" id="playerCallsign" placeholder="e.g., ALPHA-1">
+            </div>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="playerUsername" placeholder="e.g., Operator_01">
+            </div>
+            <div class="form-group">
+                <label>Rank</label>
+                <select id="playerRank">
+                    <option value="Operative">Operative</option>
+                    <option value="Corporal">Corporal</option>
+                    <option value="Sergeant">Sergeant</option>
+                    <option value="Lieutenant">Lieutenant</option>
+                    <option value="Captain">Captain</option>
+                    <option value="Commander">Commander</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Division</label>
+                <input type="text" id="playerDivision" placeholder="e.g., Special Operations">
+            </div>
+            <button class="btn" onclick="addPlayer()">Add Operative</button>
+        </div>
+    </div>
+
+    <!-- Add Wanted Modal -->
+    <div id="addWantedModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Target</h3>
+                <button class="close-btn" onclick="closeModal('addWantedModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Target Username</label>
+                <input type="text" id="wantedUsername" placeholder="Primary identifier...">
+            </div>
+            <div class="form-group">
+                <label>Known Alias</label>
+                <input type="text" id="wantedAlias" placeholder="Code name...">
+            </div>
+            <div class="form-group">
+                <label>Offense Details</label>
+                <textarea id="wantedReason" placeholder="Description of criminal activities..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Threat Assessment</label>
+                <select id="wantedThreat">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Last Known Position</label>
+                <input type="text" id="wantedLocation" placeholder="Location intel...">
+            </div>
+            <button class="btn" onclick="addWanted()">Add to Database</button>
+        </div>
+    </div>
+
+    <!-- Wanted Details Modal -->
+    <div id="wantedDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Target Dossier</h3>
+                <button class="close-btn" onclick="closeModal('wantedDetailsModal')">&times;</button>
+            </div>
+            <div id="wantedDetailsContent">
+                <!-- Details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        // IMPORTANT: Replace this with your own Firebase config
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        let database;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+            // Fallback to localStorage if Firebase fails
+            database = null;
+        }
+
+        // Admin state
+        let isAdmin = false;
+        const ADMIN_PASSWORD = 'elite2024'; // Change this password
+
+        // Data caches
+        let divisionsCache = [];
+        let playersCache = [];
+        let wantedCache = [];
+
+        // Scroll behavior
+        window.addEventListener('scroll', () => {
+            const tabsContainer = document.getElementById('tabsContainer');
+            const heroHeight = document.querySelector('.hero-section').offsetHeight;
+            
+            if (window.scrollY >= heroHeight - 100) {
+                tabsContainer.classList.add('sticky');
+            } else {
+                tabsContainer.classList.remove('sticky');
+            }
+        });
+
+        function scrollToContent() {
+            document.getElementById('contentArea').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Modal functions
+        function showAdminLogin() {
+            if (isAdmin) {
+                // Logout
+                isAdmin = false;
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+                document.getElementById('adminBtn').textContent = 'Admin Login';
+                document.getElementById('adminBtn').classList.remove('logged-in');
+            } else {
+                document.getElementById('adminLoginModal').classList.add('active');
+            }
+        }
+
+        function showAddDivision() {
+            document.getElementById('addDivisionModal').classList.add('active');
+        }
+
+        function showAddPlayer() {
+            document.getElementById('addPlayerModal').classList.add('active');
+        }
+
+        function showAddWanted() {
+            document.getElementById('addWantedModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Admin login
+        function adminLogin() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+                closeModal('adminLoginModal');
+                document.getElementById('adminBtn').textContent = 'Logout';
+                document.getElementById('adminBtn').classList.add('logged-in');
+                document.getElementById('adminPassword').value = '';
+                alert('Access granted!');
+            } else {
+                alert('Invalid access code!');
+            }
+        }
+
+        // Firebase/LocalStorage Helper Functions
+        function saveData(path, data) {
+            if (database) {
+                return database.ref(path).set(data);
+            } else {
+                // Fallback to localStorage
+                localStorage.setItem(path, JSON.stringify(data));
+                return Promise.resolve();
+            }
+        }
+
+        function getData(path) {
+            if (database) {
+                return database.ref(path).once('value').then(snapshot => snapshot.val());
+            } else {
+                // Fallback to localStorage
+                const data = localStorage.getItem(path);
+                return Promise.resolve(data ? JSON.parse(data) : null);
+            }
+        }
+
+        function deleteData(path) {
+            if (database) {
+                return database.ref(path).remove();
+            } else {
+                // Fallback to localStorage
+                localStorage.removeItem(path);
+                return Promise.resolve();
+            }
+        }
+
+        // Division functions
+        async function loadDivisions() {
+            try {
+                const data = await getData('divisions');
+                divisionsCache = data ? Object.values(data) : [];
+                
+                // Add default divisions if none exist
+                if (divisionsCache.length === 0) {
+                    divisionsCache = [
+                        {
+                            id: Date.now(),
+                            name: 'Special Operations',
+                            description: 'Elite combat unit specializing in high-risk covert operations and tactical interventions.',
+                            image: 'https://images.unsplash.com/photo-1627662055757-4c48a5c65e2a?w=800'
+                        },
+                        {
+                            id: Date.now() + 1,
+                            name: 'Intelligence Corps',
+                            description: 'Strategic intelligence gathering, analysis, and counter-intelligence operations.',
+                            image: 'https://images.unsplash.com/photo-1614935151651-0bea6508db6b?w=800'
+                        },
+                        {
+                            id: Date.now() + 2,
+                            name: 'Tactical Aviation',
+                            description: 'Air superiority operations providing reconnaissance and aerial support.',
+                            image: 'https://images.unsplash.com/photo-1583792433270-f3a96ff2a2f7?w=800'
+                        }
+                    ];
+                    await saveDivisions();
+                }
+                
+                renderDivisions();
+            } catch (error) {
+                console.error('Error loading divisions:', error);
+                document.getElementById('divisionsLoading').textContent = 'Error loading divisions';
+            }
+        }
+
+        async function saveDivisions() {
+            const divisionsObj = {};
+            divisionsCache.forEach(div => {
+                divisionsObj[div.id] = div;
             });
+            await saveData('divisions', divisionsObj);
+        }
 
-            const [sceneForm, setSceneForm] = useState({
-                title: '',
-                setting: '',
-                participants: []
+        async function addDivision() {
+            if (!isAdmin) {
+                alert('Admin access required!');
+                return;
+            }
+
+            const name = document.getElementById('divisionName').value;
+            const description = document.getElementById('divisionDesc').value;
+            const image = document.getElementById('divisionImage').value;
+
+            if (!name || !description) {
+                alert('Please fill all required fields!');
+                return;
+            }
+
+            const newDivision = {
+                id: Date.now(),
+                name,
+                description,
+                image: image || 'https://images.unsplash.com/photo-1614935151651-0bea6508db6b?w=800'
+            };
+
+            divisionsCache.push(newDivision);
+            await saveDivisions();
+            renderDivisions();
+            closeModal('addDivisionModal');
+            
+            // Clear form
+            document.getElementById('divisionName').value = '';
+            document.getElementById('divisionDesc').value = '';
+            document.getElementById('divisionImage').value = '';
+        }
+
+        async function deleteDivision(id) {
+            if (!isAdmin) return;
+            if (confirm('Delete this division?')) {
+                divisionsCache = divisionsCache.filter(d => d.id !== id);
+                await saveDivisions();
+                renderDivisions();
+            }
+        }
+
+        function renderDivisions() {
+            const grid = document.getElementById('divisionsGrid');
+            const loading = document.getElementById('divisionsLoading');
+            
+            loading.style.display = 'none';
+            grid.style.display = 'grid';
+            
+            grid.innerHTML = divisionsCache.map(div => `
+                <div class="division-card" style="background-image: url('${div.image}');">
+                    <div class="division-overlay">
+                        <h3>${div.name}</h3>
+                        <p>${div.description}</p>
+                        ${isAdmin ? `<button class="btn btn-danger" onclick="deleteDivision(${div.id})">Delete</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Player functions
+        async function loadPlayers() {
+            try {
+                const data = await getData('players');
+                playersCache = data ? Object.values(data) : [];
+                
+                // Add default players if none exist
+                if (playersCache.length === 0) {
+                    playersCache = [
+                        { id: Date.now(), callsign: 'ALPHA-1', username: 'CommanderX', rank: 'Commander', division: 'Special Operations' },
+                        { id: Date.now() + 1, callsign: 'BRAVO-2', username: 'TacticalLead', rank: 'Captain', division: 'Intelligence Corps' },
+                        { id: Date.now() + 2, callsign: 'DELTA-3', username: 'SkyWatcher', rank: 'Lieutenant', division: 'Tactical Aviation' }
+                    ];
+                    await savePlayers();
+                }
+                
+                renderPlayers();
+            } catch (error) {
+                console.error('Error loading players:', error);
+                document.getElementById('playersLoading').textContent = 'Error loading personnel';
+            }
+        }
+
+        async function savePlayers() {
+            const playersObj = {};
+            playersCache.forEach(player => {
+                playersObj[player.id] = player;
             });
+            await saveData('players', playersObj);
+        }
 
-            const [messageInput, setMessageInput] = useState('');
-            const [selectedCharacter, setSelectedCharacter] = useState('');
+        async function addPlayer() {
+            if (!isAdmin) {
+                alert('Admin access required!');
+                return;
+            }
 
-            const openModal = (type) => {
-                setModalType(type);
-                setShowModal(true);
+            const callsign = document.getElementById('playerCallsign').value;
+            const username = document.getElementById('playerUsername').value;
+            const rank = document.getElementById('playerRank').value;
+            const division = document.getElementById('playerDivision').value;
+
+            if (!callsign || !username || !division) {
+                alert('Please fill all required fields!');
+                return;
+            }
+
+            const newPlayer = {
+                id: Date.now(),
+                callsign,
+                username,
+                rank,
+                division
             };
 
-            const closeModal = () => {
-                setShowModal(false);
-                setCharForm({ name: '', description: '', personality: '', backstory: '' });
-                setSceneForm({ title: '', setting: '', participants: [] });
-            };
+            playersCache.push(newPlayer);
+            await savePlayers();
+            renderPlayers();
+            closeModal('addPlayerModal');
+            
+            // Clear form
+            document.getElementById('playerCallsign').value = '';
+            document.getElementById('playerUsername').value = '';
+            document.getElementById('playerDivision').value = '';
+        }
 
-            const createCharacter = () => {
-                if (!charForm.name) return;
+        async function deletePlayer(id) {
+            if (!isAdmin) return;
+            if (confirm('Remove this operative?')) {
+                playersCache = playersCache.filter(p => p.id !== id);
+                await savePlayers();
+                renderPlayers();
+            }
+        }
+
+        function getFilteredPlayers() {
+            const search = document.getElementById('playerSearch').value.toLowerCase();
+            const rankFilter = document.getElementById('rankFilter').value;
+            
+            return playersCache.filter(player => {
+                const matchesSearch = player.callsign.toLowerCase().includes(search) || 
+                                    player.username.toLowerCase().includes(search);
+                const matchesRank = !rankFilter || player.rank === rankFilter;
+                return matchesSearch && matchesRank;
+            });
+        }
+
+        function filterPlayers() {
+            renderPlayers();
+        }
+
+        function renderPlayers() {
+            const tbody = document.getElementById('playersTableBody');
+            const loading = document.getElementById('playersLoading');
+            const table = document.getElementById('playersTable');
+            const filteredPlayers = getFilteredPlayers();
+            
+            loading.style.display = 'none';
+            table.style.display = 'table';
+            
+            tbody.innerHTML = filteredPlayers.map(player => `
+                <tr>
+                    <td style="color: var(--gold-primary); font-weight: 600;">${player.callsign}</td>
+                    <td>${player.username}</td>
+                    <td><span class="rank-badge">${player.rank}</span></td>
+                    <td>${player.division}</td>
+                    ${isAdmin ? `<td><button class="btn btn-danger" style="padding: 0.6rem 1.25rem; font-size: 0.8rem;" onclick="deletePlayer(${player.id})">Remove</button></td>` : ''}
+                </tr>
+            `).join('');
+            
+            // Update member count
+            document.getElementById('memberCount').textContent = playersCache.length;
+        }
+
+        // Wanted functions
+        async function loadWanted() {
+            try {
+                const data = await getData('wanted');
+                wantedCache = data ? Object.values(data) : [];
                 
-                const newChar = {
-                    id: Date.now(),
-                    ...charForm,
-                    createdAt: new Date().toISOString()
-                };
-                
-                setCharacters([...characters, newChar]);
-                closeModal();
-            };
-
-            const deleteCharacter = (id) => {
-                setCharacters(characters.filter(c => c.id !== id));
-            };
-
-            const createScene = () => {
-                if (!sceneForm.title) return;
-                
-                const newScene = {
-                    id: Date.now(),
-                    ...sceneForm,
-                    createdAt: new Date().toISOString(),
-                    messages: []
-                };
-                
-                setScenes([...scenes, newScene]);
-                closeModal();
-            };
-
-            const deleteScene = (id) => {
-                setScenes(scenes.filter(s => s.id !== id));
-                if (activeScene?.id === id) {
-                    setActiveScene(null);
+                // Add default wanted if none exist
+                if (wantedCache.length === 0) {
+                    wantedCache = [
+                        {
+                            id: Date.now(),
+                            username: 'ShadowOps',
+                            alias: 'Ghost',
+                            reason: 'Unauthorized access to classified systems and theft of sensitive intelligence data.',
+                            threat: 'high',
+                            location: 'Unknown - Last detected in Eastern Sector'
+                        },
+                        {
+                            id: Date.now() + 1,
+                            username: 'RogueAgent',
+                            alias: 'Viper',
+                            reason: 'Desertion during active operation and collaboration with hostile forces.',
+                            threat: 'medium',
+                            location: 'Sector 7 - Metropolitan Area'
+                        }
+                    ];
+                    await saveWanted();
                 }
+                
+                renderWanted();
+            } catch (error) {
+                console.error('Error loading wanted:', error);
+                document.getElementById('wantedLoading').textContent = 'Error loading targets';
+            }
+        }
+
+        async function saveWanted() {
+            const wantedObj = {};
+            wantedCache.forEach(w => {
+                wantedObj[w.id] = w;
+            });
+            await saveData('wanted', wantedObj);
+        }
+
+        async function addWanted() {
+            if (!isAdmin) {
+                alert('Admin access required!');
+                return;
+            }
+
+            const username = document.getElementById('wantedUsername').value;
+            const alias = document.getElementById('wantedAlias').value;
+            const reason = document.getElementById('wantedReason').value;
+            const threat = document.getElementById('wantedThreat').value;
+            const location = document.getElementById('wantedLocation').value;
+
+            if (!username || !reason) {
+                alert('Please fill all required fields!');
+                return;
+            }
+
+            const newWanted = {
+                id: Date.now(),
+                username,
+                alias,
+                reason,
+                threat,
+                location
             };
 
-            const startScene = (scene) => {
-                setActiveScene(scene);
-                setMessages(scene.messages || []);
-                setActiveTab('play');
-            };
+            wantedCache.push(newWanted);
+            await saveWanted();
+            renderWanted();
+            closeModal('addWantedModal');
+            
+            // Clear form
+            document.getElementById('wantedUsername').value = '';
+            document.getElementById('wantedAlias').value = '';
+            document.getElementById('wantedReason').value = '';
+            document.getElementById('wantedLocation').value = '';
+        }
 
-            const sendMessage = () => {
-                if (!messageInput.trim() || !selectedCharacter) return;
+        async function deleteWanted(id) {
+            if (!isAdmin) return;
+            if (confirm('Remove this target?')) {
+                wantedCache = wantedCache.filter(w => w.id !== id);
+                await saveWanted();
+                renderWanted();
+            }
+        }
 
-                const character = characters.find(c => c.id === parseInt(selectedCharacter));
-                if (!character) return;
+        function showWantedDetails(id) {
+            const wantedPerson = wantedCache.find(w => w.id === id);
+            if (!wantedPerson) return;
 
-                const newMessage = {
-                    id: Date.now(),
-                    characterId: character.id,
-                    characterName: character.name,
-                    content: messageInput,
-                    timestamp: new Date().toLocaleTimeString()
-                };
-
-                const updatedMessages = [...messages, newMessage];
-                setMessages(updatedMessages);
-
-                // Update scene messages
-                if (activeScene) {
-                    const updatedScenes = scenes.map(s => 
-                        s.id === activeScene.id 
-                            ? { ...s, messages: updatedMessages }
-                            : s
-                    );
-                    setScenes(updatedScenes);
-                    setActiveScene({ ...activeScene, messages: updatedMessages });
-                }
-
-                setMessageInput('');
-            };
-
-            const renderCharacters = () => (
-                <div className="content-section">
-                    <div style={{ marginBottom: '2rem' }}>
-                        <button className="btn" onClick={() => openModal('character')}>
-                            + Create Character
-                        </button>
+            const threatClass = `threat-${wantedPerson.threat}`;
+            const detailsHTML = `
+                <div class="card-content">
+                    <p><strong>Target ID:</strong> ${wantedPerson.username}</p>
+                    <p><strong>Known Alias:</strong> ${wantedPerson.alias}</p>
+                    <p><strong>Offense Details:</strong> ${wantedPerson.reason}</p>
+                    <p><strong>Last Known Position:</strong> ${wantedPerson.location}</p>
+                    <div class="threat-level ${threatClass}">
+                        Threat: ${wantedPerson.threat.toUpperCase()}
                     </div>
-                    
-                    {characters.length === 0 ? (
-                        <div className="empty-state">
-                            <h3>No Characters Yet</h3>
-                            <p>Create your first character to begin your roleplay journey</p>
-                        </div>
-                    ) : (
-                        <div className="grid">
-                            {characters.map(char => (
-                                <div key={char.id} className="card">
-                                    <h3>{char.name}</h3>
-                                    <p className="card-meta">Character Profile</p>
-                                    <p><strong>Description:</strong> {char.description}</p>
-                                    <p><strong>Personality:</strong> {char.personality}</p>
-                                    <p><strong>Backstory:</strong> {char.backstory}</p>
-                                    <button 
-                                        className="btn btn-danger" 
-                                        onClick={() => deleteCharacter(char.id)}
-                                        style={{ marginTop: '1rem' }}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    ${isAdmin ? `<button class="btn btn-danger" style="margin-top: 1.5rem;" onclick="deleteWanted(${wantedPerson.id}); closeModal('wantedDetailsModal');">Remove Target</button>` : ''}
                 </div>
-            );
+            `;
 
-            const renderScenes = () => (
-                <div className="content-section">
-                    <div style={{ marginBottom: '2rem' }}>
-                        <button className="btn" onClick={() => openModal('scene')}>
-                            + Create Scene
-                        </button>
-                    </div>
-                    
-                    {scenes.length === 0 ? (
-                        <div className="empty-state">
-                            <h3>No Scenes Created</h3>
-                            <p>Set up a scene to start roleplaying with your characters</p>
-                        </div>
-                    ) : (
-                        <div className="grid">
-                            {scenes.map(scene => (
-                                <div key={scene.id} className="card">
-                                    <h3>{scene.title}</h3>
-                                    <p className="card-meta">Roleplay Scene</p>
-                                    <p><strong>Setting:</strong> {scene.setting}</p>
-                                    <div style={{ marginTop: '1rem' }}>
-                                        <span className="badge">
-                                            {scene.messages?.length || 0} Messages
-                                        </span>
-                                    </div>
-                                    <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem' }}>
-                                        <button 
-                                            className="btn" 
-                                            onClick={() => startScene(scene)}
-                                        >
-                                            Enter Scene
-                                        </button>
-                                        <button 
-                                            className="btn btn-danger" 
-                                            onClick={() => deleteScene(scene.id)}
-                                        >
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            );
+            document.getElementById('wantedDetailsContent').innerHTML = detailsHTML;
+            document.getElementById('wantedDetailsModal').classList.add('active');
+        }
 
-            const renderPlay = () => {
-                if (!activeScene) {
-                    return (
-                        <div className="empty-state">
-                            <h3>No Active Scene</h3>
-                            <p>Go to Scenes tab and select a scene to begin roleplaying</p>
-                        </div>
-                    );
-                }
-
-                return (
-                    <div className="content-section">
-                        <div className="stat-bar">
-                            <span className="stat-label">Active Scene:</span>
-                            <span className="stat-value">{activeScene.title}</span>
-                        </div>
-                        
-                        <div className="chat-container">
-                            <div className="chat-messages">
-                                {messages.length === 0 ? (
-                                    <div className="empty-state" style={{ padding: '3rem 1rem' }}>
-                                        <p>No messages yet. Start the roleplay!</p>
-                                    </div>
-                                ) : (
-                                    messages.map(msg => (
-                                        <div key={msg.id} className="message">
-                                            <div className="message-header">
-                                                <div className="message-avatar">
-                                                    {msg.characterName.charAt(0)}
-                                                </div>
-                                                <span className="message-name">{msg.characterName}</span>
-                                                <span className="message-time">{msg.timestamp}</span>
-                                            </div>
-                                            <div className="message-content">
-                                                {msg.content}
-                                            </div>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                            
-                            <div className="input-group">
-                                <label>Select Character</label>
-                                <select 
-                                    value={selectedCharacter} 
-                                    onChange={(e) => setSelectedCharacter(e.target.value)}
-                                >
-                                    <option value="">Choose a character...</option>
-                                    {characters.map(char => (
-                                        <option key={char.id} value={char.id}>
-                                            {char.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            
-                            <div className="message-input">
-                                <input
-                                    type="text"
-                                    placeholder="Type your message..."
-                                    value={messageInput}
-                                    onChange={(e) => setMessageInput(e.target.value)}
-                                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                                />
-                                <button className="btn" onClick={sendMessage}>
-                                    Send
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                );
-            };
-
-            return (
-                <div className="app-container">
-                    <header className="header">
-                        <h1>Narrative Nexus</h1>
-                        <p>Create characters, build worlds, tell stories</p>
-                    </header>
-
-                    <div className="tabs">
-                        <button 
-                            className={`tab ${activeTab === 'characters' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('characters')}
-                        >
-                            Characters
-                        </button>
-                        <button 
-                            className={`tab ${activeTab === 'scenes' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('scenes')}
-                        >
-                            Scenes
-                        </button>
-                        <button 
-                            className={`tab ${activeTab === 'play' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('play')}
-                        >
-                            Play
-                        </button>
-                    </div>
-
-                    {activeTab === 'characters' && renderCharacters()}
-                    {activeTab === 'scenes' && renderScenes()}
-                    {activeTab === 'play' && renderPlay()}
-
-                    {showModal && (
-                        <div className="modal" onClick={closeModal}>
-                            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                                <div className="modal-header">
-                                    <h2>
-                                        {modalType === 'character' ? 'Create Character' : 'Create Scene'}
-                                    </h2>
-                                    <button className="close-btn" onClick={closeModal}>×</button>
-                                </div>
-
-                                {modalType === 'character' ? (
-                                    <>
-                                        <div className="input-group">
-                                            <label>Name</label>
-                                            <input
-                                                type="text"
-                                                value={charForm.name}
-                                                onChange={(e) => setCharForm({...charForm, name: e.target.value})}
-                                                placeholder="Character name..."
-                                            />
-                                        </div>
-                                        <div className="input-group">
-                                            <label>Description</label>
-                                            <textarea
-                                                value={charForm.description}
-                                                onChange={(e) => setCharForm({...charForm, description: e.target.value})}
-                                                placeholder="Physical appearance, age, etc..."
-                                            />
-                                        </div>
-                                        <div className="input-group">
-                                            <label>Personality</label>
-                                            <textarea
-                                                value={charForm.personality}
-                                                onChange={(e) => setCharForm({...charForm, personality: e.target.value})}
-                                                placeholder="Traits, quirks, behaviors..."
-                                            />
-                                        </div>
-                                        <div className="input-group">
-                                            <label>Backstory</label>
-                                            <textarea
-                                                value={charForm.backstory}
-                                                onChange={(e) => setCharForm({...charForm, backstory: e.target.value})}
-                                                placeholder="History, motivations, goals..."
-                                            />
-                                        </div>
-                                        <button className="btn" onClick={createCharacter}>
-                                            Create Character
-                                        </button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className="input-group">
-                                            <label>Scene Title</label>
-                                            <input
-                                                type="text"
-                                                value={sceneForm.title}
-                                                onChange={(e) => setSceneForm({...sceneForm, title: e.target.value})}
-                                                placeholder="Scene name..."
-                                            />
-                                        </div>
-                                        <div className="input-group">
-                                            <label>Setting</label>
-                                            <textarea
-                                                value={sceneForm.setting}
-                                                onChange={(e) => setSceneForm({...sceneForm, setting: e.target.value})}
-                                                placeholder="Describe the environment, time period, atmosphere..."
-                                            />
-                                        </div>
-                                        <button className="btn" onClick={createScene}>
-                                            Create Scene
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    )}
-                </div>
+        function getFilteredWanted() {
+            const search = document.getElementById('wantedSearch').value.toLowerCase();
+            
+            return wantedCache.filter(w => 
+                w.username.toLowerCase().includes(search) || 
+                w.alias.toLowerCase().includes(search)
             );
         }
 
-        ReactDOM.render(<RoleplayApp />, document.getElementById('root'));
+        function filterWanted() {
+            renderWanted();
+        }
+
+        function renderWanted() {
+            const grid = document.getElementById('wantedGrid');
+            const loading = document.getElementById('wantedLoading');
+            const filteredWanted = getFilteredWanted();
+            
+            loading.style.display = 'none';
+            grid.style.display = 'grid';
+            
+            grid.innerHTML = filteredWanted.map(w => `
+                <div class="wanted-card" onclick="showWantedDetails(${w.id})">
+                    <div class="card-header">
+                        <h3 class="card-title">${w.username}</h3>
+                        <span class="card-badge">${w.alias}</span>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Charges:</strong> ${w.reason.substring(0, 120)}${w.reason.length > 120 ? '...' : ''}</p>
+                        <div class="threat-level threat-${w.threat}">
+                            ${w.threat.toUpperCase()}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', async () => {
+            await loadDivisions();
+            await loadPlayers();
+            await loadWanted();
+        });
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        // Enter key support for forms
+        document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') adminLogin();
+        });
     </script>
 </body>
 </html>

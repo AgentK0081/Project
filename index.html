@@ -1276,36 +1276,7 @@ const firebaseConfig = {
         }
 
         // Firebase/LocalStorage Helper Functions
-        function saveData(path, data) {
-            if (database) {
-                return database.ref(path).set(data);
-            } else {
-                // Fallback to localStorage
-                localStorage.setItem(path, JSON.stringify(data));
-                return Promise.resolve();
-            }
-        }
-
-        function getData(path) {
-            if (database) {
-                return database.ref(path).once('value').then(snapshot => snapshot.val());
-            } else {
-                // Fallback to localStorage
-                const data = localStorage.getItem(path);
-                return Promise.resolve(data ? JSON.parse(data) : null);
-            }
-        }
-
-        function deleteData(path) {
-            if (database) {
-                return database.ref(path).remove();
-            } else {
-                // Fallback to localStorage
-                localStorage.removeItem(path);
-                return Promise.resolve();
-            }
-        }
-
+        
         // Division functions
         async function loadDivisions() {
             try {
